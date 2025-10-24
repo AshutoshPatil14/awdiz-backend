@@ -1,10 +1,8 @@
 import express, { Router } from "express";
 
-
 const route = Router();
 
 route.use(express.json());
-
 
 var newUsers = [
   { id: 1, name: "Ted", age: 28 },
