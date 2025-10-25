@@ -1,10 +1,8 @@
 import express, { Router } from "express";
 
-
 const route = Router();
 
 route.use(express.json());
-
 
 route.post("/login", (req, res) => {
   const { email, password } = req.body;
