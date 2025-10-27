@@ -16,7 +16,6 @@ route.post("/login", (req, res) => {
   if (user.password !== password) {
     return res.send("Incorrect password");
   }
-  
   console.log(req.body, "req");
   res.send("Hello, You're logged in!");
 });
