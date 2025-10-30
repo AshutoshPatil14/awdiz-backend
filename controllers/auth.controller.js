@@ -14,6 +14,7 @@ export const Login = (req, res) => {
   res.send("Hello, You're logged in!");
 };
 
+
 export const Register = (req, res) => {
   const { email, password } = req.body || {};
   if (!email || !password) {
