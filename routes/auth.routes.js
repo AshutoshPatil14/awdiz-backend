@@ -7,6 +7,6 @@ route.use(express.json());
 
 route.post("/login", Login);
 
-route.post("/reg", Register);
+route.post("/register", Register);
 
 export default route;

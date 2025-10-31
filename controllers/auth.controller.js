@@ -1,31 +1,50 @@
-export const Login = (req, res) => {
+import User from "../models/user.schema.js";
+
+export const Login = async (req, res) => {
   const { email, password } = req.body || {};
+
+  // check for empty fields
   if (!email || !password) {
-    return res.send("Please provide email and password");
+    return res.status(400).send("Please fill all the fields");
   }
-  const user = users.find((user) => user.email === email);
-  if (!user) {
-    return res.send("User not found");
+
+  // check for existing user
+  const user = await User.findOne({ email });
+  if (user.email!==email) {
+    return res.status(404).send("User not found");
+
+    //check for correct credentials
+  }else if(user.email===email){
+    if(user.password!==password){
+      return res.status(401).send("Incorrect password");
+    }else if(user.password===password){
+      return res.status(200).send(`Hello ${user.name}, You're logged in!`);
+    }
   }
-  if (user.password !== password) {
-    return res.send("Incorrect password");
-  }
-  console.log(req.body, "req");
-  res.send("Hello, You're logged in!");
 };
 
 
-export const Register = (req, res) => {
-  const { email, password } = req.body || {};
-  if (!email || !password) {
-    return res.status(400).send("Please provide email and password");
+export const Register = async (req, res) => {
+
+  // console.log(req.body, "req");
+
+  const {name, email, password } = req.body || {};
+  
+  //check for empty fields
+  if (!name || !email || !password) {                     
+    return res.status(400).send("Please fill the missing fields");
   }
-  const existingUser = users.find((user) => user.email === email);
+  
+  // check for existing user
+  const existingUser = await User.findOne({ email });
   if (existingUser) {
     return res.status(409).send("User already exists");
   }
   console.log(req.body, "req");
-  // Store only the minimal user info for this example
-  users.push({ email, password });
+  // res.send(req.body)
+  
+  // create new user
+  const user = new User({ name, email, password });
+  await user.save();
   res.status(201).send("Thanks for registering!\nYou can now log in.");
 };
