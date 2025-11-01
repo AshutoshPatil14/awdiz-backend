@@ -2,11 +2,13 @@ import express from "express";
 import dotenv from "dotenv";
 import mainRouter from "./routes/index.js";
 import mongoose from 'mongoose';
+import cors from "cors";
 
 const app = express();
 dotenv.config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 app.get("/", (req, res) => {
   res.send(`Hello, This is ${process.env.MY_NAME}!`);

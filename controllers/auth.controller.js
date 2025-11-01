@@ -1,4 +1,5 @@
 import User from "../models/user.schema.js";
+import bcrypt from "bcrypt";
 
 export const Login = async (req, res) => {
   const { email, password } = req.body || {};
@@ -15,10 +16,16 @@ export const Login = async (req, res) => {
 
     //check for correct credentials
   }else if(user.email===email){
-    if(user.password!==password){
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    if(!isPasswordCorrect){
       return res.status(401).send("Incorrect password");
-    }else if(user.password===password){
-      return res.status(200).send(`Hello ${user.name}, You're logged in!`);
+    }else if(isPasswordCorrect){
+      // Send the user document to frontend
+      return res.status(200).json({
+        success: true,
+        message: `Hello ${user.name}, You're logged in!`,
+        user: user
+      });
     }
   }
 };
@@ -40,11 +47,13 @@ export const Register = async (req, res) => {
   if (existingUser) {
     return res.status(409).send("User already exists");
   }
-  console.log(req.body, "req");
+  // console.log(req.body, "req");
   // res.send(req.body)
   
   // create new user
-  const user = new User({ name, email, password });
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const user = new User({ name, email, password: hashedPassword });
   await user.save();
   res.status(201).send("Thanks for registering!\nYou can now log in.");
 };
