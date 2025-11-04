@@ -9,6 +9,8 @@ route.post("/login", Login);
 
 route.post("/register", Register);
 
-route.get("/get-current-user", getCurrentUser);
+import { tokenDecoder } from "../middlewares/tokenMiddleware.js";
+
+route.get("/get-current-user", tokenDecoder, getCurrentUser);
 
 export default route;

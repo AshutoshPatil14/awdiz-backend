@@ -4,6 +4,7 @@ import mainRouter from "./routes/index.js";
 import mongoose from "mongoose";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { tokenDecoder } from "./middlewares/tokenMiddleware.js";
 
 const app = express();
 dotenv.config();
@@ -19,7 +20,7 @@ app.get("/", (req, res) => {
   res.send(`Hello, This is ${process.env.MY_NAME}!`);
 });
 
-app.use("/api/v1", mainRouter);
+app.use("/api/v1", tokenDecoder, mainRouter);
 
 mongoose
   .connect(process.env.MONGODB_URL)

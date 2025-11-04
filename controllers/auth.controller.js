@@ -12,32 +12,31 @@ export const Login = async (req, res) => {
 
   // check for existing user
   const user = await User.findOne({ email });
-  if (user.email !== email) {
+  if (!user) {
     return res.status(404).json({ message: "User not found", success: false });
-
-    //check for correct credentials
-  } else if (user.email === email) {
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
-    if (!isPasswordCorrect) {
-      return res.status(401).json({ message: "Incorrect password", success: false });
-    } else if (isPasswordCorrect) {
-      // Send the user document to frontend
-      // console.log(user);
-      // create a token
-      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
-      // console.log(token,"token")
-
-      // set the token as a cookie
-      res.cookie("token", token, {
-        httpOnly: true,
-      });
-      return res.status(200).json({
-        success: true,
-        message: `Hello ${user.name}, You're logged in!`,
-        user: { userId: user._id, name: user.name, email: user.email },
-      });
-    }
   }
+
+  const isPasswordCorrect = await bcrypt.compare(password, user.password);
+  if (!isPasswordCorrect) {
+    return res.status(401).json({ message: "Incorrect password", success: false });
+  }
+
+  // Send the user document to frontend
+  // console.log(user);
+  // create a token
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+  // console.log(token,"token")
+
+  // set the token as a cookie
+  res.cookie("token", token, {
+    httpOnly: true,
+  });
+
+  return res.status(200).json({
+    success: true,
+    message: `Hello ${user.name}, You're logged in!`,
+    user: { userId: user._id, name: user.name, email: user.email },
+  });
 };
 
 export const Register = async (req, res) => {
@@ -68,12 +67,18 @@ export const Register = async (req, res) => {
 
 export const getCurrentUser = async (req, res) => {
   try{
-    const token = req.cookies.token
-    console.log("Token form cookies", token)
+    // const token = req.cookies.token
+    // console.log("Token form cookies", token)
+
+     const isUserExist = await User.findById(req.userId)
+    if(!isUserExist){
+      return res.status(404).json({ message: "User not found", success: false });
+    } 
+
     return res.status(200).json({
       message: "Login Successful",
       success: true,
-      
+      user: { userId: isUserExist._id, name: isUserExist.name, email: isUserExist.email },
     })
   }catch(error){
     return res.status(401).json({ message: "Unauthorized", success: false });
