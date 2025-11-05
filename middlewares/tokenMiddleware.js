@@ -2,6 +2,11 @@ import jwt from "jsonwebtoken";
 
 export const tokenDecoder = (req, res, next) => {
   try {
+
+    if (req.path === "/api/v1/login" || req.path === "/api/v1/register") {
+      return next();
+    }
+
     const token = req.cookies.token;
     if (token) {
       const decodedToken = jwt.verify(token, process.env.JWT_SECRET);

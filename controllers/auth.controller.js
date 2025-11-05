@@ -84,3 +84,16 @@ export const getCurrentUser = async (req, res) => {
     return res.status(401).json({ message: "Unauthorized", success: false });
   }
 }
+
+export const Logout = (req, res) => {
+  try {
+    // Clear the auth token cookie
+    res.clearCookie("token", {
+      httpOnly: true,
+    });
+
+    return res.status(200).json({ message: "Logged out successfully", success: true });
+  } catch (error) {
+    return res.status(500).json({ message: "Failed to logout", success: false });
+  }
+};
