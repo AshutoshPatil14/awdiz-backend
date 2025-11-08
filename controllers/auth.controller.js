@@ -3,10 +3,10 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 export const Login = async (req, res) => {
-  const { email, password } = req.body || {};
+  const {role, email, password } = req.body || {};
 
   // check for empty fields
-  if (!email || !password) {
+  if (!role || !email || !password) {
     return res.status(400).json({ message: "Please fill all the fields", success: false });
   }
 
@@ -24,7 +24,7 @@ export const Login = async (req, res) => {
   // Send the user document to frontend
   // console.log(user);
   // create a token
-  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+  const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET);
   // console.log(token,"token")
 
   // set the token as a cookie
@@ -42,10 +42,10 @@ export const Login = async (req, res) => {
 export const Register = async (req, res) => {
   // console.log(req.body, "req");
 
-  const { name, email, password } = req.body || {};
+  const {role, name, email, password } = req.body || {};
 
   //check for empty fields
-  if (!name || !email || !password) {
+  if (!role || !name || !email || !password) {  
     return res.status(400).json({ message: "Please fill the missing fields", success: false });
   }
 
@@ -60,7 +60,7 @@ export const Register = async (req, res) => {
   // create new user
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const user = new User({ name, email, password: hashedPassword });
+  const user = new User({role, name, email, password: hashedPassword });
   await user.save();
   res.status(201).json({ message: "Thanks for registering!\nYou can now log in.", success: true });
 };
@@ -78,7 +78,7 @@ export const getCurrentUser = async (req, res) => {
     return res.status(200).json({
       message: "Login Successful",
       success: true,
-      user: { userId: isUserExist._id, name: isUserExist.name, email: isUserExist.email },
+      user: { userId: isUserExist._id, name: isUserExist.name, email: isUserExist.email, role: isUserExist.role },
     })
   }catch(error){
     return res.status(401).json({ message: "Unauthorized", success: false });
