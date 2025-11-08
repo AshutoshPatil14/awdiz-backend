@@ -35,7 +35,7 @@ export const Login = async (req, res) => {
   return res.status(200).json({
     success: true,
     message: `Hello ${user.name}, You're logged in!`,
-    user: { userId: user._id, name: user.name, email: user.email },
+    user: { userId: user._id, name: user.name, email: user.email, role: user.role },
   });
 };
 
@@ -43,7 +43,10 @@ export const Register = async (req, res) => {
   // console.log(req.body, "req");
 
   const {role, name, email, password } = req.body || {};
-
+  // console.log(role, "role")
+  // console.log(name, "name")
+  // console.log(email, "email")
+  // console.log(password, "password")
   //check for empty fields
   if (!role || !name || !email || !password) {  
     return res.status(400).json({ message: "Please fill the missing fields", success: false });
