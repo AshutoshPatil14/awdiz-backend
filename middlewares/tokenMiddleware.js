@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
+import User from "../models/user.schema.js";
 
-export const tokenDecoder = (req, res, next) => {
+export const tokenDecoder = async (req, res, next) => {
   try {
 
     if (req.path === "/api/v1/login" || req.path === "/api/v1/register") {
@@ -10,7 +11,8 @@ export const tokenDecoder = (req, res, next) => {
     const token = req.cookies.token;
     if (token) {
       const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-      req.userId = decodedToken.userId;
+      const user = await User.findById(decodedToken.userId);
+      req.user = user;
     }
     next();
   } catch (error) {
