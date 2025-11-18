@@ -4,7 +4,7 @@ import User from "../models/user.schema.js";
 export const tokenDecoder = async (req, res, next) => {
   try {
 
-    if (req.path === "/api/v1/login" || req.path === "/api/v1/register") {
+    if (req.path === "/api/v1/auth/login" || req.path === "/api/v1/auth/register") {
       return next();
     }
 
